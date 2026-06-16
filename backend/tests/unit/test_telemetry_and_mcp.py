@@ -65,5 +65,7 @@ async def test_agent_run_emits_genai_spans(tools: MCPToolGateway, spans: InMemor
     agent = next(s for s in finished if s.name == "invoke_agent researcher")
     chat = next(s for s in finished if s.name.startswith("chat"))
     assert agent.attributes is not None and agent.attributes["gen_ai.conversation.id"] == "run-1"
-    assert chat.attributes is not None and chat.attributes["gen_ai.usage.input_tokens"] > 0
+    assert chat.attributes is not None
+    input_tokens = chat.attributes["gen_ai.usage.input_tokens"]
+    assert isinstance(input_tokens, int) and input_tokens > 0
     assert chat.parent is not None and chat.parent.span_id == agent.context.span_id
