@@ -40,11 +40,13 @@ export function formatRelative(iso: string, now: Date = new Date()): string {
 }
 
 export function formatDuration(ms: number): string {
-  if (ms < 1000) return `${Math.round(ms)} ms`
+  // Round before picking the unit, so 59.7 s reads "1 min 0 s" rather than "60 s".
+  if (Math.round(ms) < 1000) return `${Math.round(ms)} ms`
   const seconds = ms / 1000
-  if (seconds < 60) return `${seconds.toFixed(seconds < 10 ? 1 : 0)} s`
-  const minutes = Math.floor(seconds / 60)
-  return `${minutes} min ${Math.round(seconds % 60)} s`
+  if (seconds < 9.95) return `${seconds.toFixed(1)} s`
+  const whole = Math.round(seconds)
+  if (whole < 60) return `${whole} s`
+  return `${Math.floor(whole / 60)} min ${whole % 60} s`
 }
 
 export const NODE_LABELS: Record<string, string> = {

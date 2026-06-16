@@ -19,6 +19,13 @@ describe("format", () => {
     expect(formatDuration(125_000)).toBe("2 min 5 s")
   })
 
+  it("never shows a rounded-up value in the smaller unit", () => {
+    expect(formatDuration(999.6)).toBe("1.0 s")
+    expect(formatDuration(9_970)).toBe("10 s")
+    expect(formatDuration(59_700)).toBe("1 min 0 s")
+    expect(formatDuration(119_600)).toBe("2 min 0 s")
+  })
+
   it("labels graph nodes", () => {
     expect(nodeLabel("compliance_checker")).toBe("Compliance checker")
     expect(nodeLabel("custom_node")).toBe("custom node")
