@@ -1,0 +1,169 @@
+[
+  {
+    "id": "clean-freight-forwarder",
+    "description": "Established German forwarder with only positive coverage; policy auto-approves. The scripted model retries news_search when adverse media comes back empty, so this scenario deliberately shows an efficiency deviation.",
+    "vendor": {"name": "Northwind Logistics", "country": "DE"},
+    "reviewer": null,
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "low",
+      "compliance_status": "clear",
+      "decision": "approved",
+      "requires_human": false
+    }
+  },
+  {
+    "id": "clean-cloud-host",
+    "description": "US cloud host with a fund as minority owner; the fund must be screened as a company. The scripted model retries news_search when adverse media comes back empty, so this scenario deliberately shows an efficiency deviation.",
+    "vendor": {"name": "Atlas Cloud Services", "country": "US"},
+    "reviewer": null,
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "low",
+      "compliance_status": "clear",
+      "decision": "approved",
+      "requires_human": false
+    }
+  },
+  {
+    "id": "breach-under-investigation",
+    "description": "Component supplier with a recent data breach and an open regulator investigation.",
+    "vendor": {"name": "Helios Components", "country": "GB"},
+    "reviewer": {
+      "action": "edit",
+      "reviewer": "eval:compliance-analyst",
+      "comment": "Acceptable with a 30-day security attestation.",
+      "edits": {"conditions": ["SOC 2 Type II report within 30 days", "Quarterly ICO investigation update"]}
+    },
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "high",
+      "compliance_status": "clear",
+      "decision": "approved_with_conditions",
+      "requires_human": true
+    }
+  },
+  {
+    "id": "sanctioned-beneficial-owner",
+    "description": "Trading company whose majority owner is on the OFAC SDN list.",
+    "vendor": {"name": "Corvane Trading", "country": "AE"},
+    "reviewer": {"action": "reject", "reviewer": "eval:compliance-lead", "comment": "Confirmed SDN ownership."},
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "critical",
+      "compliance_status": "match",
+      "decision": "rejected",
+      "requires_human": true
+    }
+  },
+  {
+    "id": "regulatory-fines",
+    "description": "Generic drug maker with a GMP fine and a product recall in the last year.",
+    "vendor": {"name": "Meridian Pharma", "country": "ES"},
+    "reviewer": {"action": "approve", "reviewer": "eval:procurement"},
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "high",
+      "compliance_status": "clear",
+      "decision": "approved_with_conditions",
+      "requires_human": true
+    }
+  },
+  {
+    "id": "ambiguous-entity",
+    "description": "Two registry entities share the trading name; the researcher must pin the active one. The scripted model retries news_search when adverse media comes back empty, so this scenario deliberately shows an efficiency deviation.",
+    "vendor": {"name": "Bluefin Analytics", "country": "GB"},
+    "reviewer": null,
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "low",
+      "compliance_status": "clear",
+      "decision": "approved",
+      "requires_human": false
+    }
+  },
+  {
+    "id": "young-company",
+    "description": "Chip design start-up incorporated under 18 months ago with no press coverage.",
+    "vendor": {"name": "Kestrel Microsystems", "country": "SG"},
+    "reviewer": {"action": "approve", "reviewer": "eval:procurement"},
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search", "news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "medium",
+      "compliance_status": "clear",
+      "decision": "approved",
+      "requires_human": true
+    }
+  },
+  {
+    "id": "fuzzy-sanctions-hit",
+    "description": "Payments firm whose shareholder fuzzily matches an EU-listed person.",
+    "vendor": {"name": "Quantum Ledger", "country": "EE"},
+    "reviewer": {"action": "approve", "reviewer": "eval:compliance-lead", "comment": "Different date of birth; false positive."},
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "low",
+      "compliance_status": "potential_match",
+      "decision": "approved_with_conditions",
+      "requires_human": true
+    }
+  },
+  {
+    "id": "dissolved-entity",
+    "description": "Trucking company that filed for Chapter 7 and was dissolved.",
+    "vendor": {"name": "Orion Freight", "country": "US"},
+    "reviewer": {"action": "reject", "reviewer": "eval:procurement"},
+    "expected": {
+      "handoffs": ["researcher", "risk_analyst", "compliance_checker", "approval", "report_writer", "finish"],
+      "tools": {
+        "researcher": ["company_registry_lookup", "news_search"],
+        "risk_analyst": ["news_search"],
+        "compliance_checker": ["sanctions_check", "sanctions_check"]
+      },
+      "risk_rating": "critical",
+      "compliance_status": "clear",
+      "decision": "rejected",
+      "requires_human": true
+    }
+  }
+]

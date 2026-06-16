@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+project_venv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+coverage/
+
+# Local data, logs and secrets
+.data/
+tmp/
+logs/
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Not part of this project
+.github/
