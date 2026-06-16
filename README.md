@@ -19,7 +19,6 @@ A supervisor and four specialist agents run vendor due diligence on LangGraph. R
   <img alt="shadcn/ui" src="https://img.shields.io/badge/shadcn%2Fui-React%20Flow-111111?logo=shadcnui&logoColor=white" />
   <img alt="OpenTelemetry" src="https://img.shields.io/badge/OpenTelemetry-GenAI%20spans-F5A800?logo=opentelemetry&logoColor=white" />
   <img alt="mypy strict" src="https://img.shields.io/badge/mypy-strict-2A6DB2" />
-  <a href=".github/workflows/ci.yml"><img alt="CI" src="https://img.shields.io/badge/CI-GitHub%20Actions-2088FF?logo=githubactions&logoColor=white" /></a>
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-green" /></a>
 </p>
 
@@ -67,9 +66,9 @@ Handoff is a working reference for each of these, built around a domain where th
 | **Cost governance** | Per-run token and dollar caps are enforced against a spend ledger that also counts failed, retried and crashed attempts. Per-node retry budgets apply only to retryable errors. Failures fall into a structured taxonomy: `ToolError`, `ModelError`, `PolicyViolation`, `BudgetExceeded`. |
 | **MCP tools** | A bundled MCP server exposes `company_registry_lookup`, `sanctions_check` and `news_search` over fixtures, via stdio, Streamable HTTP or in-process. Agents depend on a `ToolGateway` protocol, so you can swap tools without touching agent code. The client reconnects on transport failure. |
 | **Time travel** | Every checkpoint is browsable in a timeline. Open one to inspect its state, patch vendor, budget, research, risk or compliance, and fork a new run that continues from that step. |
-| **Trajectory evals** | Nine scenarios score tool-sequence similarity (LCS per agent), handoff order, step efficiency, outcome correctness and an LLM-judged reasoning score. Run them from the CLI with a summary table and a `--min-score` gate for CI. Reports also appear in the UI. |
+| **Trajectory evals** | Nine scenarios score tool-sequence similarity (LCS per agent), handoff order, step efficiency, outcome correctness and an LLM-judged reasoning score. Run them from the CLI with a summary table and a `--min-score` threshold that exits non-zero. Reports also appear in the UI. |
 | **OpenTelemetry GenAI spans** | `invoke_workflow`, `invoke_agent {agent}`, `chat {model}` and `execute_tool {tool}` spans follow the GenAI semantic conventions and export over OTLP/HTTP. Re-executions after a crash or an approval pause link back to the first trace. |
-| **Run inspector** | Next.js + shadcn/ui + React Flow. Live node status arrives over SSE, fed by Postgres `LISTEN/NOTIFY`. The inspector also has a checkpoint timeline, approval inbox, trajectory view, activity feed and the final report. Light and dark mode follow Apple's HIG. |
+| **Run inspector** | Next.js + shadcn/ui + React Flow. Live node status arrives over SSE, fed by Postgres `LISTEN/NOTIFY`. The inspector also has a checkpoint timeline, approval inbox, trajectory view, activity feed and the final report, in light and dark ink-and-teal themes set in IBM Plex. It works down to phone width. |
 | **Offline by default** | A deterministic scripted model reads the same briefings the real model gets, and it prices its tokens like the default model so budgets still apply. The demo, the tests and the evals all run without an API key. |
 
 ## Screenshots
@@ -113,6 +112,14 @@ Handoff is a working reference for each of these, built around a domain where th
 **Trajectory evals.** A redundant `news_search` call costs 14% efficiency even though the verdict is right.
 
 ![Trajectory evals page with KPI tiles and a scenario table, one scenario expanded to show a redundant news_search call](docs/screenshots/evals.png)
+
+**On a phone.** The sidebar folds into a sheet, the usage meters stack and the graph keeps its layout.
+
+<p>
+  <img alt="Runs list at phone width with KPI tiles stacked above the run table" src="docs/screenshots/runs-mobile.png" width="30%" />
+  <img alt="Completed Meridian Pharma run at phone width with usage meters and the agent graph" src="docs/screenshots/run-mobile.png" width="30%" />
+  <img alt="Approval inbox at phone width listing pending requests" src="docs/screenshots/approvals-mobile.png" width="30%" />
+</p>
 
 ## Architecture
 
@@ -455,7 +462,7 @@ clean-freight-forwarder: risk_analyst tools: expected ['news_search'], got ['new
 | Outcome | 0.25 | Risk rating, compliance status, final decision and whether a human was required, each checked against the scenario. |
 | Reasoning | 0.20 | An LLM judge scores the evidence trail from 1 to 5 against a `Judgement` schema, normalised to 0–1. |
 
-A scenario passes at ≥ 0.80. The three 0.94 rows are deliberate: when adverse media comes back empty, the scripted model searches again. The efficiency metric exists to catch exactly that kind of redundancy. CI runs `handoff eval run --min-score 0.9` and uploads the JSON report as an artifact.
+A scenario passes at ≥ 0.80. The three 0.94 rows are deliberate: when adverse media comes back empty, the scripted model searches again. The efficiency metric exists to catch exactly that kind of redundancy. `handoff eval run --min-score 0.9 --output report.json` exits non-zero when the mean drops below 0.9 and writes the full results as JSON.
 
 ## Tech stack
 
@@ -469,8 +476,8 @@ A scenario passes at ≥ 0.80. The three 0.94 rows are deliberate: when adverse 
 | Config | **pydantic-settings** with cross-field validation | Invalid lease and heartbeat ratios, unknown reviewer roles and demo tokens in production fail at startup. |
 | Observability | **OpenTelemetry SDK** + OTLP/HTTP exporter, **structlog** | GenAI semantic-convention spans plus structured logs carrying `run_id` and `worker_id`. |
 | CLI | **Typer** + **Rich** | `api`, `worker`, `mcp-tools`, `db init`, `seed`, `eval run`, `demo crash`. |
-| Frontend | **Next.js 16** App Router (React 19.2), **TypeScript strict**, **shadcn/ui**, **React Flow** (`@xyflow/react`), **TanStack Query**, **zod** | API responses are validated at runtime with zod. The graph view comes from the backend's `/graph` topology. |
-| Quality | **pytest** (+ Postgres integration), **mypy --strict** with the pydantic plugin, **ruff**, **Vitest**, **ESLint** | Lint, type checks, tests and evals all run in CI. |
+| Frontend | **Next.js 16** App Router (React 19.3), **TypeScript strict**, **shadcn/ui**, **React Flow** (`@xyflow/react`), **TanStack Query**, **zod** | API responses are validated at runtime with zod. The graph view comes from the backend's `/graph` topology. |
+| Quality | **pytest** (+ Postgres integration), **mypy --strict** with the pydantic plugin, **ruff**, **Vitest**, **ESLint** | `make lint`, `make typecheck`, `make test` and `make eval` cover each layer. |
 | Packaging | **Docker Compose**: postgres, mcp-tools, api, worker, web | `docker compose up --build` brings the whole stack up. |
 
 ## Engineering decisions and trade-offs
@@ -532,27 +539,23 @@ handoff-agents/
 ├── scripts/                # local-postgres.sh, dev.sh
 ├── docs/screenshots/
 ├── docker-compose.yml
-├── Makefile
-└── .github/workflows/ci.yml
+└── Makefile
 ```
 
 ## Quickstart
 
-### Prerequisites
+### Docker Compose (recommended)
 
-- Python 3.12+ and Node 22+ with pnpm 9
-- PostgreSQL 16 or 17 server binaries (`brew install postgresql@17`), **or** Docker
-
-### Local (no Docker)
+Only Docker is needed. The stack is Postgres 16, the MCP tool server, the API, one worker and the web app, all running the offline scripted model.
 
 ```bash
-make setup                         # venv + pip install -e "backend[dev]" + pnpm install
-make db                            # PostgreSQL on 127.0.0.1:5504, data in .data/postgres
-make seed                          # applies Alembic migrations, then seeds 12 runs, approvals, a fork and an eval report
-make dev                           # API :8104 · worker · Next.js :3104
+docker compose up --build -d
+docker compose exec api handoff seed --reset   # 12 runs, approvals, a fork and an eval report
 ```
 
-Open **http://localhost:3104** and sign in as a demo reviewer:
+Open **http://localhost:3104** (API at http://localhost:8104/api, Postgres on localhost:5504). Compose runs the MCP tools as their own service over Streamable HTTP (`HANDOFF_MCP_TRANSPORT=http`). `docker compose down -v` stops everything and drops the database volume.
+
+Sign in as one of the demo reviewers:
 
 | Reviewer | Role | Can decide |
 |---|---|---|
@@ -560,26 +563,30 @@ Open **http://localhost:3104** and sign in as a demo reviewer:
 | Sofia Marin | `compliance-lead` | Analyst and compliance-lead tiers |
 | James Whitaker | `chief-risk-officer` | Everything, including approving over a confirmed sanctions match (with justification) |
 
-API clients send `Authorization: Bearer demo-analyst-token`, `demo-compliance-lead-token` or `demo-cro-token`. For a production web build, run `cd frontend && pnpm build && pnpm start`. To stop everything, press Ctrl-C on `make dev`, then run `make db-stop`.
-
-Things to try:
-
-```bash
-make demo-crash     # SIGKILL a worker mid-run and watch another resume it (stop other workers first)
-make eval           # trajectory evals; the report appears on the Evals page
-```
+API clients send `Authorization: Bearer demo-analyst-token`, `demo-compliance-lead-token` or `demo-cro-token`.
 
 In the UI, start a run for **Corvane Trading** (sanctioned beneficial owner), approve **Helios Components** with edits, or fork the failed **Helios** run from a checkpoint with a larger budget. Putting `simulate:flaky-model` in a vendor's notes makes each specialist's first model call fail, so you can watch the node retry policy work.
 
-### Docker Compose
+To watch crash recovery, stop the Compose worker so the demo's own workers pick up the run, then start it again:
 
 ```bash
-docker compose up --build
-# web http://localhost:3104 · api http://localhost:8104/api · postgres localhost:5504
-docker compose exec api handoff seed --reset
+docker compose stop worker
+docker compose exec api handoff demo crash   # SIGKILLs a worker mid-run; a fresh one resumes it
+docker compose start worker
 ```
 
-Compose runs the MCP tools as their own service over Streamable HTTP (`HANDOFF_MCP_TRANSPORT=http`).
+### Local (no Docker)
+
+Needs Python 3.12 (`backend/.python-version`), Node 22 (`frontend/.nvmrc`) with pnpm 9, and PostgreSQL 16 or 17 server binaries (`brew install postgresql@17`).
+
+```bash
+make setup                         # venv + pip install -e "backend[dev]" + pnpm install
+make db                            # PostgreSQL on 127.0.0.1:5504, data in .data/postgres
+make seed                          # applies Alembic migrations, then seeds the demo data
+make dev                           # API :8104 · worker · Next.js :3104
+```
+
+For a production web build, run `cd frontend && pnpm build && pnpm start`. To stop everything, press Ctrl-C on `make dev`, then run `make db-stop`. `make demo-crash` and `make eval` run the crash demo and the trajectory evals against the local database.
 
 ### Use Claude instead of the scripted model
 
@@ -642,8 +649,6 @@ make eval        # trajectory evals
 | `tests/unit` | Anthropic adapter mapping, budget and contracts, fixture catalog, DTOs, MCP reconnect resilience, LCS scorers, OTel span attributes, worker loops. |
 | `frontend/src/**/*.test.ts(x)` | Approval policy guards, decision dialogs, formatting, graph status derivation from events, SSE hook. |
 
-CI (`.github/workflows/ci.yml`) runs the backend against a `postgres:16-alpine` service: lint, mypy, pytest and evals gated at 0.9. The frontend job runs lint, typecheck, Vitest and a production build, and a final job runs `docker compose build`.
-
 ## API overview
 
 All routes are under `/api`. Everything except `/healthz` and `/session*` requires a reviewer, either as a bearer token or the session cookie. Interactive docs are at `http://localhost:8104/docs`.
@@ -674,6 +679,52 @@ All routes are under `/api`. Everything except `/healthz` and `/session*` requir
 curl -s -X POST localhost:8104/api/runs \
   -H 'Authorization: Bearer demo-analyst-token' -H 'Content-Type: application/json' \
   -d '{"vendor":{"name":"Corvane Trading","country":"AE"},"budget":{"max_tokens":60000,"max_usd":0.5}}'
+```
+
+The run comes back queued; a worker claims it within a poll interval (`claims` counts every claim, including recoveries):
+
+```json
+{
+  "id": "482b4d5d-8008-4313-8b94-a6afdf8f9705",
+  "vendor_name": "Corvane Trading",
+  "vendor_country": "AE",
+  "status": "queued",
+  "current_node": null,
+  "risk_rating": null,
+  "decision": null,
+  "usage": {"input_tokens": 0, "output_tokens": 0, "total_tokens": 0, "cost_usd": 0.0, "llm_calls": 0, "tool_calls": 0},
+  "budget": {"max_tokens": 60000, "max_usd": 0.5},
+  "parent_run_id": null,
+  "forked_from_checkpoint": null,
+  "error": null,
+  "claims": 0,
+  "created_at": "2026-11-08T09:21:48.865396Z",
+  "updated_at": "2026-11-08T09:21:48.865396Z",
+  "started_at": null,
+  "completed_at": null
+}
+```
+
+`GET /api/stats` on the seeded database, after the crash demo and a couple of new runs:
+
+```json
+{
+  "runs_by_status": {"awaiting_approval": 4, "completed": 7, "failed": 1, "rejected": 2, "running": 1},
+  "total_runs": 15,
+  "pending_approvals": 4,
+  "total_cost_usd": 1.4938,
+  "avg_cost_usd": 0.0996
+}
+```
+
+Validation failures and missing credentials use the same envelope:
+
+```bash
+$ curl -s -X POST localhost:8104/api/runs -H 'Authorization: Bearer demo-analyst-token' \
+    -H 'Content-Type: application/json' -d '{"vendor":{"name":"X","country":"GBR"}}'
+{"error":{"code":"validation_error","message":"vendor.name: String should have at least 2 characters; vendor.country: String should have at most 2 characters"}}
+$ curl -s localhost:8104/api/runs
+{"error":{"code":"unauthenticated","message":"Sign in to continue."}}
 ```
 
 Errors share one envelope, `{"error": {"code", "message"}}`. The codes are `not_found` (404), `conflict` (409), `unauthenticated` (401), `forbidden` (403), `validation_error` / `refused` (422) and `bad_request` (400). A run's terminal failure is stored on the run as `ErrorInfo { kind, message, node, retryable, attempt, details }`.
