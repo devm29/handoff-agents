@@ -1,9 +1,11 @@
 FROM python:3.12-slim AS build
-ENV PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+# The cache mount keeps downloaded wheels across builds, so a dropped connection does not
+# mean fetching the whole dependency tree again.
+ENV PIP_DISABLE_PIP_VERSION_CHECK=1 PIP_DEFAULT_TIMEOUT=60 PIP_RETRIES=10
 WORKDIR /src
 COPY pyproject.toml ./
 COPY src ./src
-RUN pip wheel --wheel-dir /wheels .
+RUN --mount=type=cache,target=/root/.cache/pip pip wheel --wheel-dir /wheels .
 
 FROM python:3.12-slim
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 \
