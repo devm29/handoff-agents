@@ -104,13 +104,16 @@ class Worker:
                 await asyncio.wait_for(self._wake.wait(), timeout=timeout)
 
     def _spawn(self, run_id: UUID, fence: int) -> None:
-        if run_id in self._active:
-            return
-        task = asyncio.create_task(self._execute(run_id, fence), name=f"run-{run_id}")
+        # This worker can reclaim its own run when its heartbeat went stale. The task still
+        # holding the old fence will stop with LeaseLost, so the new claim runs after it.
+        previous = self._active.get(run_id)
+        task = asyncio.create_task(self._execute(run_id, fence, previous), name=f"run-{run_id}-{fence}")
         self._active[run_id] = task
 
-    async def _execute(self, run_id: UUID, fence: int) -> None:
+    async def _execute(self, run_id: UUID, fence: int, previous: asyncio.Task[None] | None = None) -> None:
         try:
+            if previous is not None:
+                await asyncio.wait([previous])
             await self._executor.execute(run_id, fence=fence)
         except asyncio.CancelledError:
             self._log.info("run.interrupted", run_id=str(run_id))
@@ -118,7 +121,8 @@ class Worker:
         except Exception:
             self._log.exception("run.executor_crashed", run_id=str(run_id))
         finally:
-            self._active.pop(run_id, None)
+            if self._active.get(run_id) is asyncio.current_task():
+                del self._active[run_id]
             self._wake.set()
 
     async def _heartbeat_loop(self, stop: asyncio.Event) -> None:

@@ -104,5 +104,38 @@ async def test_worker_exits_when_a_loop_dies(monkeypatch: pytest.MonkeyPatch) ->
         await asyncio.wait_for(worker.run(asyncio.Event()), timeout=10)
 
 
+async def test_reclaiming_an_own_stale_run_executes_it_with_the_new_fence() -> None:
+    run_id = uuid4()
+    first_started = asyncio.Event()
+    release_first = asyncio.Event()
+    executed: list[int] = []
+    finished = asyncio.Event()
+
+    class FencedExecutor:
+        async def execute(self, run_id: UUID, *, fence: int) -> None:
+            executed.append(fence)
+            if fence == 1:
+                first_started.set()
+                await release_first.wait()
+            else:
+                finished.set()
+
+    worker = Worker(
+        settings=_settings(),
+        sessions=cast("Any", FakeSessions()),
+        executor=cast("RunExecutor", FencedExecutor()),
+        approvals=cast("ApprovalService", IdleApprovals()),
+    )
+    worker._spawn(run_id, 1)
+    await asyncio.wait_for(first_started.wait(), timeout=5)
+    worker._spawn(run_id, 2)
+    assert worker.active_runs == [run_id]
+    release_first.set()
+    await asyncio.wait_for(finished.wait(), timeout=5)
+    await asyncio.sleep(0)
+    assert executed == [1, 2], "the reclaimed run is not dropped while the fenced-out task winds down"
+    assert worker.active_runs == []
+
+
 def test_default_worker_ids_are_unique_per_process() -> None:
     assert _settings().worker_id != _settings().worker_id
