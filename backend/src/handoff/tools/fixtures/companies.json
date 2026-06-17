@@ -1,0 +1,166 @@
+[
+  {
+    "registration_number": "HRB 204518",
+    "legal_name": "Northwind Logistics GmbH",
+    "aliases": ["Northwind Logistics"],
+    "jurisdiction": "DE",
+    "status": "active",
+    "incorporated_on": "2009-03-12",
+    "industry": "Freight forwarding and contract logistics",
+    "address": "Am Sandtorkai 41, 20457 Hamburg, Germany",
+    "website": "northwind-logistics.de",
+    "beneficial_owners": [
+      {"name": "Katrin Vogel", "role": "Managing Director", "ownership_pct": 62, "nationality": "DE"},
+      {"name": "Jonas Albrecht", "role": "Chief Financial Officer", "ownership_pct": 38, "nationality": "DE"}
+    ]
+  },
+  {
+    "registration_number": "08812345",
+    "legal_name": "Helios Components Ltd",
+    "aliases": ["Helios Components"],
+    "jurisdiction": "GB",
+    "status": "active",
+    "incorporated_on": "2013-09-02",
+    "industry": "Electronic components manufacturing",
+    "address": "Unit 4, Torrington Avenue, Coventry CV4 9AP, United Kingdom",
+    "website": "helioscomponents.co.uk",
+    "beneficial_owners": [
+      {"name": "Priya Raman", "role": "Director", "ownership_pct": 55, "nationality": "GB"},
+      {"name": "Daniel Okafor", "role": "Director", "ownership_pct": 45, "nationality": "GB"}
+    ]
+  },
+  {
+    "registration_number": "FZE-118204",
+    "legal_name": "Corvane Trading FZE",
+    "aliases": ["Corvane Trading", "Corvane"],
+    "jurisdiction": "AE",
+    "status": "active",
+    "incorporated_on": "2021-06-17",
+    "industry": "Industrial commodities trading",
+    "address": "LOB 16, Jebel Ali Free Zone, Dubai, United Arab Emirates",
+    "website": "corvane-trading.ae",
+    "beneficial_owners": [
+      {"name": "Marek Dravik", "role": "Owner", "ownership_pct": 80, "nationality": "CY"},
+      {"name": "Leila Haddad", "role": "General Manager", "ownership_pct": 20, "nationality": "AE"}
+    ]
+  },
+  {
+    "registration_number": "7731942",
+    "legal_name": "Atlas Cloud Services Inc",
+    "aliases": ["Atlas Cloud"],
+    "jurisdiction": "US",
+    "status": "active",
+    "incorporated_on": "2016-01-20",
+    "industry": "Managed cloud hosting",
+    "address": "600 Congress Ave, Suite 1400, Austin, TX 78701, United States",
+    "website": "atlascloud.io",
+    "beneficial_owners": [
+      {"name": "Maya Chen", "role": "Chief Executive Officer", "ownership_pct": 40, "nationality": "US"},
+      {"name": "Robert Alvarez", "role": "Chief Technology Officer", "ownership_pct": 35, "nationality": "US"},
+      {"name": "Northgate Ventures LP", "role": "Investor", "ownership_pct": 25, "nationality": "US"}
+    ]
+  },
+  {
+    "registration_number": "A-87234561",
+    "legal_name": "Meridian Pharma S.A.",
+    "aliases": ["Meridian Pharma", "Meridian Farma"],
+    "jurisdiction": "ES",
+    "status": "active",
+    "incorporated_on": "1998-11-05",
+    "industry": "Generic pharmaceuticals",
+    "address": "Calle de Alcalá 265, 28027 Madrid, Spain",
+    "website": "meridianpharma.es",
+    "beneficial_owners": [
+      {"name": "Lucía Fernández", "role": "Chief Executive Officer", "ownership_pct": 51, "nationality": "ES"},
+      {"name": "Grupo Ventana Holdings", "role": "Shareholder", "ownership_pct": 49, "nationality": "ES"}
+    ]
+  },
+  {
+    "registration_number": "11290877",
+    "legal_name": "Bluefin Analytics Ltd",
+    "aliases": ["Bluefin Analytics"],
+    "jurisdiction": "GB",
+    "status": "active",
+    "incorporated_on": "2018-04-11",
+    "industry": "Data analytics consulting",
+    "address": "21 Leonard Street, London EC2A 4DY, United Kingdom",
+    "website": "bluefin-analytics.com",
+    "beneficial_owners": [
+      {"name": "Hannah Whitlock", "role": "Director", "ownership_pct": 70, "nationality": "GB"},
+      {"name": "Rahim Siddiqui", "role": "Director", "ownership_pct": 30, "nationality": "GB"}
+    ]
+  },
+  {
+    "registration_number": "12940032",
+    "legal_name": "Bluefin Analytics Holdings Ltd",
+    "aliases": ["Bluefin Analytics"],
+    "jurisdiction": "GB",
+    "status": "dissolved",
+    "incorporated_on": "2020-10-01",
+    "industry": "Holding company",
+    "address": "3 More London Riverside, London SE1 2RE, United Kingdom",
+    "website": null,
+    "beneficial_owners": [
+      {"name": "Graham Pell", "role": "Director", "ownership_pct": 100, "nationality": "GB"}
+    ]
+  },
+  {
+    "registration_number": "202538871K",
+    "legal_name": "Kestrel Microsystems Pte. Ltd.",
+    "aliases": ["Kestrel Microsystems"],
+    "jurisdiction": "SG",
+    "status": "active",
+    "incorporated_on": "2025-11-03",
+    "industry": "Semiconductor design",
+    "address": "1 Fusionopolis Way, #12-02, Singapore 138632",
+    "website": "kestrelmicro.sg",
+    "beneficial_owners": [
+      {"name": "Tan Wei Ming", "role": "Director", "ownership_pct": 70, "nationality": "SG"},
+      {"name": "Arjun Mehta", "role": "Director", "ownership_pct": 30, "nationality": "IN"}
+    ]
+  },
+  {
+    "registration_number": "0450123987",
+    "legal_name": "Orion Freight LLC",
+    "aliases": ["Orion Freight"],
+    "jurisdiction": "US",
+    "status": "dissolved",
+    "incorporated_on": "2012-02-14",
+    "industry": "Trucking and freight brokerage",
+    "address": "88 Port Jersey Blvd, Jersey City, NJ 07305, United States",
+    "website": "orionfreight.com",
+    "beneficial_owners": [
+      {"name": "Samuel Price", "role": "Managing Member", "ownership_pct": 100, "nationality": "US"}
+    ]
+  },
+  {
+    "registration_number": "16234567",
+    "legal_name": "Quantum Ledger OÜ",
+    "aliases": ["Quantum Ledger"],
+    "jurisdiction": "EE",
+    "status": "active",
+    "incorporated_on": "2022-03-29",
+    "industry": "Payment processing for digital assets",
+    "address": "Narva mnt 7, 10117 Tallinn, Estonia",
+    "website": "quantumledger.ee",
+    "beneficial_owners": [
+      {"name": "Erik Tamm", "role": "Management Board Member", "ownership_pct": 60, "nationality": "EE"},
+      {"name": "Dmitri Volkonsky", "role": "Shareholder", "ownership_pct": 40, "nationality": "LV"}
+    ]
+  },
+  {
+    "registration_number": "L24000187",
+    "legal_name": "Lumen Health Partners LLC",
+    "aliases": ["Lumen Health"],
+    "jurisdiction": "US",
+    "status": "active",
+    "incorporated_on": "2014-07-08",
+    "industry": "Clinical staffing services",
+    "address": "200 S Orange Ave, Orlando, FL 32801, United States",
+    "website": "lumenhealthpartners.com",
+    "beneficial_owners": [
+      {"name": "Grace Whitfield", "role": "Managing Member", "ownership_pct": 75, "nationality": "US"},
+      {"name": "Marcus Bell", "role": "Member", "ownership_pct": 25, "nationality": "US"}
+    ]
+  }
+]

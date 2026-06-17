@@ -1,0 +1,10 @@
+[
+  {"entry_id": "SDN-48211", "name": "Marek Dravik", "aliases": ["Marek Dravic", "M. Dravik"], "kind": "person", "list_name": "OFAC SDN", "program": "RUSSIA-EO14024", "listed_on": "2024-02-23", "country": "CY"},
+  {"entry_id": "EU-2025-0913", "name": "Dmitriy Volkonskiy", "aliases": ["Dmitry Volkonsky"], "kind": "person", "list_name": "EU Consolidated", "program": "Regulation 269/2014", "listed_on": "2025-05-20", "country": "RU"},
+  {"entry_id": "SDN-51877", "name": "Golden Crescent Shipping LLC", "aliases": ["Golden Crescent Maritime"], "kind": "company", "list_name": "OFAC SDN", "program": "IRAN-EO13846", "listed_on": "2023-11-02", "country": "AE"},
+  {"entry_id": "UK-RUS-1842", "name": "Severnaya Metals JSC", "aliases": ["Severnaya Metallurgy"], "kind": "company", "list_name": "UK Sanctions List", "program": "Russia", "listed_on": "2022-06-29", "country": "RU"},
+  {"entry_id": "SDN-39020", "name": "Han Song-il", "aliases": ["Han Song Il"], "kind": "person", "list_name": "OFAC SDN", "program": "DPRK3", "listed_on": "2019-08-30", "country": "KP"},
+  {"entry_id": "UN-QDi.442", "name": "Al-Rashad Charitable Trust", "aliases": ["Rashad Trust"], "kind": "company", "list_name": "UN Security Council", "program": "ISIL (Da'esh) and Al-Qaida", "listed_on": "2018-03-14", "country": "SY"},
+  {"entry_id": "EU-2024-0377", "name": "Corvex Industrial Supplies", "aliases": [], "kind": "company", "list_name": "EU Consolidated", "program": "Regulation 833/2014", "listed_on": "2024-12-16", "country": "BY"},
+  {"entry_id": "SDN-55102", "name": "Tomas Reinholt", "aliases": ["Thomas Reinholt"], "kind": "person", "list_name": "OFAC SDN", "program": "CYBER2", "listed_on": "2025-09-09", "country": "DE"}
+]
