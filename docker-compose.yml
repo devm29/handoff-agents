@@ -1,0 +1,76 @@
+name: handoff
+
+x-backend: &backend
+  build: ./backend
+  environment: &backend-env
+    HANDOFF_DATABASE_URL: postgresql://handoff:handoff@postgres:5432/handoff
+    HANDOFF_LLM_PROVIDER: ${HANDOFF_LLM_PROVIDER:-fake}
+    ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+    HANDOFF_MCP_TRANSPORT: http
+    HANDOFF_MCP_URL: http://mcp-tools:8000/mcp
+    HANDOFF_CORS_ORIGINS: '["http://localhost:3104"]'
+    OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+  depends_on:
+    postgres:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: handoff
+      POSTGRES_PASSWORD: handoff
+      POSTGRES_DB: handoff
+    ports:
+      - "5504:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U handoff"]
+      interval: 5s
+      retries: 10
+
+  mcp-tools:
+    <<: *backend
+    command: ["handoff", "mcp-tools", "--transport", "http"]
+    environment:
+      HANDOFF_MCP_HTTP_HOST: 0.0.0.0
+      HANDOFF_MCP_HTTP_PORT: "8000"
+    depends_on: []
+    healthcheck:
+      disable: true
+
+  api:
+    <<: *backend
+    command: ["handoff", "api"]
+    ports:
+      - "8104:8104"
+
+  worker:
+    <<: *backend
+    command: ["handoff", "worker"]
+    environment:
+      <<: *backend-env
+      HANDOFF_FAKE_LATENCY_MS: "600"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mcp-tools:
+        condition: service_started
+    healthcheck:
+      disable: true
+
+  web:
+    build:
+      context: ./frontend
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8104/api
+    ports:
+      - "3104:3104"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  pgdata:
